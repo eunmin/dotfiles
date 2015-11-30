@@ -1,5 +1,5 @@
 ;; cask
-(require 'cask "/usr/local/Cellar/cask/0.7.2/cask.el")
+(require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
 (cask-initialize)
 
 ;; tabbar
@@ -109,8 +109,8 @@
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook #'highlight-parentheses-mode)
 
-;; (eval-after-load 'flycheck '(flycheck-clojure-setup))
-;; (add-hook 'after-init-hook #'global-flycheck-mode)
+(eval-after-load 'flycheck '(flycheck-clojure-setup))
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; (eval-after-load 'flycheck
 ;;   '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
