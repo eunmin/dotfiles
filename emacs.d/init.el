@@ -2,11 +2,39 @@
 (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
 (cask-initialize)
 
-;; tabbar
-;; (load-file "~/.emacs.d/tabbar.el")
+(add-to-list 'load-path "~/.emacs.d/lisp")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
-;; hide menu bar
-(menu-bar-mode -1)
+(when (window-system)
+  (set-default-font "monaco"))
+
+;; Enable ligatures
+(when (functionp 'mac-auto-operator-composition-mode)
+  (mac-auto-operator-composition-mode))
+
+(setq inhibit-startup-message t)
+(blink-cursor-mode 0)
+(menu-bar-mode 1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; make full screen
+(custom-set-variables
+ '(initial-frame-alist (quote ((fullscreen . maximized)))))
+
+;; Disable annoying visible bell on OSX
+(setq visible-bell nil)
+
+;; Actually, why not disable the annoying audible bell as well
+(setq ring-bell-function 'ignore)
+
+;; Mac Emacs settings
+(setq mac-option-modifier 'meta)
+(setq mac-command-modifier 'super)
+
+;; Buffer settings
+(setq require-final-newline t)
+(setq show-trailing-whitespace t)
 
 ;; smex
 (smex-initialize)
@@ -34,7 +62,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(hl-paren-colors (quote ("color-196" "color-220" "color-201" "color-46"))))
+ '(hl-paren-colors (quote ("color-196" "color-220" "color-201" "color-46")))
+ '(mac-option-modifier (quote meta)))
 
 ;; rainbow-delimiters for lisp
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
@@ -44,7 +73,6 @@
 (flx-ido-mode 1)
 
 ;; theme
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (load-theme 'zenburn t)
 
 ;; idle-highlight-mode
@@ -83,6 +111,10 @@
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
 
 (custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(vertical-border ((t (:foreground "brightblack")))))
 
 (recentf-mode t)
@@ -112,8 +144,8 @@
 (eval-after-load 'flycheck '(flycheck-clojure-setup))
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; (eval-after-load 'flycheck
-;;   '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
+(eval-after-load 'flycheck
+  '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
 
 (defun clj-refactor-setup ()
   (clj-refactor-mode 1)
