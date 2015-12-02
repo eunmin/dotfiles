@@ -5,36 +5,36 @@
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
-(when (window-system)
-  (set-default-font "monaco"))
+(load-theme 'zenburn t)
 
-;; Enable ligatures
+(powerline-default-theme)
+
 (when (functionp 'mac-auto-operator-composition-mode)
   (mac-auto-operator-composition-mode))
-
 (setq inhibit-startup-message t)
 (blink-cursor-mode 0)
-(menu-bar-mode 1)
+(menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(setq visible-bell nil)
+(setq ring-bell-function 'ignore)
+(setq mac-option-modifier 'meta)
+(setq mac-command-modifier 'super)
+(setq require-final-newline t)
+(setq show-trailing-whitespace t)
 
-;; make full screen
+;; start with fullscreen
 (custom-set-variables
  '(initial-frame-alist (quote ((fullscreen . maximized)))))
 
-;; Disable annoying visible bell on OSX
-(setq visible-bell nil)
+;; left right margin color 
+(set-face-attribute 'fringe nil :background "#3F3F3F")
 
-;; Actually, why not disable the annoying audible bell as well
-(setq ring-bell-function 'ignore)
+(set-default-font "Monaco 13")
 
-;; Mac Emacs settings
-(setq mac-option-modifier 'meta)
-(setq mac-command-modifier 'super)
-
-;; Buffer settings
-(setq require-final-newline t)
-(setq show-trailing-whitespace t)
+;; flat style mode-line
+(set-face-attribute 'mode-line nil :box nil)
+(set-face-attribute 'mode-line-inactive nil :box nil)
 
 ;; smex
 (smex-initialize)
@@ -56,15 +56,6 @@
 ;; projectile
 (projectile-global-mode)
 
-;; highlight-parentheses-mode color
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(hl-paren-colors (quote ("color-196" "color-220" "color-201" "color-46")))
- '(mac-option-modifier (quote meta)))
-
 ;; rainbow-delimiters for lisp
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'emacs-lisp-mode-hook #'highlight-parentheses-mode)
@@ -72,15 +63,17 @@
 ;; flx-ido
 (flx-ido-mode 1)
 
-;; theme
-(load-theme 'zenburn t)
-
 ;; idle-highlight-mode
 (idle-highlight-mode 1)
 
 ;; show line number
 (global-linum-mode 1)
 (setq linum-format "%3d ")
+
+(set-cursor-color "#6F6F6F")
+
+;; virtical line color
+(set-face-attribute 'vertical-border nil :foreground "#494949")
 
 ;; auto reload file
 (global-auto-revert-mode 1)
@@ -107,15 +100,6 @@
 
 ;; pbcopy for osx
 (turn-on-pbcopy)
-
-(set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(vertical-border ((t (:foreground "brightblack")))))
 
 (recentf-mode t)
 
