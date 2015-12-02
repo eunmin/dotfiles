@@ -2,6 +2,8 @@
 (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
 (cask-initialize)
 
+(server-start)
+
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
@@ -9,8 +11,6 @@
 
 (powerline-default-theme)
 
-(when (functionp 'mac-auto-operator-composition-mode)
-  (mac-auto-operator-composition-mode))
 (setq inhibit-startup-message t)
 (blink-cursor-mode 0)
 (menu-bar-mode -1)
@@ -56,7 +56,7 @@
 ;; projectile
 (projectile-global-mode)
 
-;; rainbow-delimiters for lisp
+;; rainbow-delimiters 
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'emacs-lisp-mode-hook #'highlight-parentheses-mode)
 
