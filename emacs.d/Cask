@@ -23,3 +23,4 @@
 (depends-on "json-mode")
 (depends-on "clj-refactor")
 (depends-on "powerline")
+(depends-on "magit")
