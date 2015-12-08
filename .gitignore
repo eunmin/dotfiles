@@ -5,3 +5,6 @@ projectile-bookmarks.eld
 recentf
 smex-items
 self-installs
+eshell
+.lein-env
+repl-history
