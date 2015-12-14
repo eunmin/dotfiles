@@ -141,4 +141,5 @@
 ;; disable magic requires
 (setq cljr-magic-requires nil)
 
+;; npm install -g jshint
 (add-hook 'js-mode-hook (lambda () (flycheck-mode t)))
