@@ -127,9 +127,9 @@
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; (eval-after-load 'flycheck '(flycheck-clojure-setup))
-;; (eval-after-load 'flycheck
-;;   '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
+(eval-after-load 'flycheck '(flycheck-clojure-setup))
+(eval-after-load 'flycheck
+  '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
 
 (defun clj-refactor-setup ()
   (clj-refactor-mode 1)
@@ -149,3 +149,6 @@
      (require 'tagedit)
      (tagedit-add-paredit-like-keybindings)
      (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+
+;; npm install -g jshint
+(add-hook 'js-mode-hook (lambda () (flycheck-mode t)))
