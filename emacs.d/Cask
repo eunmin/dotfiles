@@ -24,3 +24,4 @@
 (depends-on "clj-refactor")
 (depends-on "powerline")
 (depends-on "magit")
+(depends-on "tagedit")
