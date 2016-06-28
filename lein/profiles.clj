@@ -1,8 +1,5 @@
-{:user {:plugins [[cider/cider-nrepl "0.11.0-SNAPSHOT"]
-       		  [refactor-nrepl "2.0.0-SNAPSHOT"]
+{:user {:plugins [[cider/cider-nrepl "0.12.0"]
                   [lein-environ "1.0.0"]
-                  [jonase/eastwood "0.2.2"]
-                  [lein-environ "1.0.0"]]
+                  [lein-try "0.4.3"]]
 	:dependencies [[org.clojure/tools.nrepl "0.2.12"]
-                       [acyclic/squiggly-clojure "0.1.4"]]
-        :env {}}}
+                       [acyclic/squiggly-clojure "0.1.5"]]}}

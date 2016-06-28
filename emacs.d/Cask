@@ -25,3 +25,6 @@
 (depends-on "powerline")
 (depends-on "magit")
 (depends-on "tagedit")
+(depends-on "haskell-mode")
+(depends-on "which-key")
+(depends-on "flycheck-tip")

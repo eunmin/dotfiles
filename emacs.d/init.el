@@ -2,8 +2,6 @@
 (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
 (cask-initialize)
 
-(server-start)
-
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
@@ -25,7 +23,15 @@
 
 ;; start with fullscreen
 (custom-set-variables
- '(initial-frame-alist (quote ((fullscreen . maximized)))))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(safe-local-variable-values
+   (quote
+    ((haskell-process-use-ghci . t)
+     (haskell-indent-spaces . 4)))))
 
 ;; left right margin color 
 (set-face-attribute 'fringe nil :background "#3F3F3F")
@@ -128,8 +134,15 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (eval-after-load 'flycheck '(flycheck-clojure-setup))
+(add-hook 'after-init-hook #'global-flycheck-mode)
 (eval-after-load 'flycheck
   '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
+
+(require 'flycheck-tip)
+(flycheck-tip-use-timer 'verbose)
+
+(add-hook 'cider-mode-hook 
+	  (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
 (defun clj-refactor-setup ()
   (clj-refactor-mode 1)
@@ -140,6 +153,7 @@
 
 ;; disable magic requires
 (setq cljr-magic-requires nil)
+(setq cljr-favor-prefix-notation nil)
 
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
@@ -152,3 +166,19 @@
 
 ;; npm install -g jshint
 (add-hook 'js-mode-hook (lambda () (flycheck-mode t)))
+
+(setq js-indent-level 2)
+
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(global-prettify-symbols-mode 1)
+
+(setq enable-local-variables :safe)
+
+(setq clojure-indent-style :always-indent)
