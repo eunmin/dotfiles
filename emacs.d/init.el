@@ -133,14 +133,13 @@
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;; squiggly-clojure
 (eval-after-load 'flycheck '(flycheck-clojure-setup))
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (eval-after-load 'flycheck
   '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
-
 (require 'flycheck-tip)
 (flycheck-tip-use-timer 'verbose)
-
 (add-hook 'cider-mode-hook 
 	  (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
@@ -182,3 +181,20 @@
 (setq enable-local-variables :safe)
 
 (setq clojure-indent-style :always-indent)
+
+(defun disable-cider-test-key ()
+  (let ((map (define-prefix-command 'cider-test-commands-map)))
+    (define-key map (kbd "C-r") nil)
+    (define-key map (kbd "C-t") nil)
+    (define-key map (kbd "C-n") nil)
+    (define-key map (kbd "C-l") nil)
+    (define-key map (kbd "C-p") nil)
+    (define-key map (kbd "C-b") nil)
+    (define-key map (kbd "r")   nil)
+    (define-key map (kbd "t")   nil)
+    (define-key map (kbd "n")   nil)
+    (define-key map (kbd "l")   nil)
+    (define-key map (kbd "p")   nil)
+    (define-key map (kbd "b")   nil)))
+
+(add-hook 'cider-mode-hook #'disable-cider-test-key)
