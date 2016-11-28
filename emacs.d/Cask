@@ -31,3 +31,4 @@
 (depends-on "pallet")
 (depends-on "use-package")
 (depends-on "go-mode")
+(depends-on "dired+")

@@ -192,3 +192,21 @@
 
 (setq tabbar-ruler-global-tabbar t)
 (setq tabbar-ruler-global-ruler t)
+
+;; layout
+(defun startup-layout ()
+  (interactive)
+  (delete-other-windows)
+  (split-window-horizontally 30)
+  (dired ".")
+  (dired-hide-details-mode)
+  (next-multiframe-window)
+  (split-window-vertically (- (window-height) 10)))
+
+(startup-layout)
+
+(require 'dired+)
+(global-dired-hide-details-mode)
+
+(purpose-load-window-layout "eunmin")
+
