@@ -32,3 +32,4 @@
 (depends-on "use-package")
 (depends-on "go-mode")
 (depends-on "dired+")
+(depends-on "neotree")

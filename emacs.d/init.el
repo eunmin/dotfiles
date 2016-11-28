@@ -197,16 +197,22 @@
 (defun startup-layout ()
   (interactive)
   (delete-other-windows)
-  (split-window-horizontally 30)
-  (dired ".")
-  (dired-hide-details-mode)
+;  (split-window-horizontally 30)
+;  (dired ".")
+;  (dired-hide-details-mode)
   (next-multiframe-window)
-  (split-window-vertically (- (window-height) 10)))
+  (split-window-vertically (- (window-height) 10))
+  (neotree))
 
 (startup-layout)
 
-(require 'dired+)
-(global-dired-hide-details-mode)
+;; (require 'dired+)
+;; (global-dired-hide-details-mode)
 
-(purpose-load-window-layout "eunmin")
+;; (purpose-load-window-layout "eunmin")
 
+(setq projectile-switch-project-action 'neotree-projectile-action)
+
+(add-hook 'purpose-select-buffer-hook
+	  (lambda ()
+	    (neotree-find)))
