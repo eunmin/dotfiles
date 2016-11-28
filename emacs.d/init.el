@@ -1,9 +1,18 @@
 ;; cask
-(require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+(require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+
+(setq mac-option-modifier 'meta)
 
 (load-theme 'zenburn t)
 
@@ -21,19 +30,16 @@
 (setq require-final-newline t)
 (setq show-trailing-whitespace t)
 
-;; start with fullscreen
+
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+ '(cider-inject-dependencies-at-jack-in t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(safe-local-variable-values
    (quote
     ((haskell-process-use-ghci . t)
-     (haskell-indent-spaces . 4)))))
+     (haskell-indent-spaces . 4))))
+ '(split-height-threshold 9999))
 
-;; left right margin color 
 (set-face-attribute 'fringe nil :background "#3F3F3F")
 
 (set-default-font "Monaco 13")
@@ -136,12 +142,6 @@
 ;; squiggly-clojure
 (eval-after-load 'flycheck '(flycheck-clojure-setup))
 (add-hook 'after-init-hook #'global-flycheck-mode)
-(eval-after-load 'flycheck
-  '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))
-(require 'flycheck-tip)
-(flycheck-tip-use-timer 'verbose)
-(add-hook 'cider-mode-hook 
-	  (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
 (defun clj-refactor-setup ()
   (clj-refactor-mode 1)
@@ -153,9 +153,6 @@
 ;; disable magic requires
 (setq cljr-magic-requires nil)
 (setq cljr-favor-prefix-notation nil)
-
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
 
 (eval-after-load "sgml-mode"
   '(progn
@@ -169,12 +166,6 @@
 (setq js-indent-level 2)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
 (global-prettify-symbols-mode 1)
 
@@ -182,19 +173,22 @@
 
 (setq clojure-indent-style :always-indent)
 
-(defun disable-cider-test-key ()
-  (let ((map (define-prefix-command 'cider-test-commands-map)))
-    (define-key map (kbd "C-r") nil)
-    (define-key map (kbd "C-t") nil)
-    (define-key map (kbd "C-n") nil)
-    (define-key map (kbd "C-l") nil)
-    (define-key map (kbd "C-p") nil)
-    (define-key map (kbd "C-b") nil)
-    (define-key map (kbd "r")   nil)
-    (define-key map (kbd "t")   nil)
-    (define-key map (kbd "n")   nil)
-    (define-key map (kbd "l")   nil)
-    (define-key map (kbd "p")   nil)
-    (define-key map (kbd "b")   nil)))
+(require 'window-purpose)
+(purpose-mode)
 
-(add-hook 'cider-mode-hook #'disable-cider-test-key)
+(add-to-list 'purpose-user-mode-purposes '(clojure-mode . clj))
+(add-to-list 'purpose-user-regexp-purposes '("^\\*.+\\*$" . sp))
+(purpose-compile-user-configuration)
+
+(add-to-list 'load-path "~/workspace/go/src/github.com/dougm/goflymake")
+(require 'go-flymake)
+(require 'go-flycheck)
+
+(add-to-list 'load-path "~/workspace/go/src/github.com/nsf/gocode/emacs")
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
+(put 'set-goal-column 'disabled nil)
+
+(setq tabbar-ruler-global-tabbar t)
+(setq tabbar-ruler-global-ruler t)
