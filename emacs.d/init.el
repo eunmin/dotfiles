@@ -45,8 +45,8 @@
 (set-default-font "Monaco 13")
 
 ;; flat style mode-line
-(set-face-attribute 'mode-line nil :box nil)
-(set-face-attribute 'mode-line-inactive nil :box nil)
+;(set-face-attribute 'mode-line nil :box nil)
+;(set-face-attribute 'mode-line-inactive nil :box nil)
 
 ;; smex
 (smex-initialize)
@@ -213,6 +213,17 @@
 
 (setq projectile-switch-project-action 'neotree-projectile-action)
 
-(add-hook 'purpose-select-buffer-hook
-	  (lambda ()
-	    (neotree-find)))
+;(setq neo-auto-indent-point t)
+
+;; (add-hook 'window-configuration-change-hook
+;; 	  (lambda ()
+;; 	    (interactive)
+;; 	    (let* ((filename (buffer-file-name)))
+;; 	      (when filename
+;; 		(neo-global--open-and-find filename)))))
+
+(with-eval-after-load 'neotree
+  (hl-line-mode 1))
+
+;;; init.el ends here
+
