@@ -140,8 +140,8 @@
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; squiggly-clojure
-(eval-after-load 'flycheck '(flycheck-clojure-setup))
-(add-hook 'after-init-hook #'global-flycheck-mode)
+;; (eval-after-load 'flycheck '(flycheck-clojure-setup))
+;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (defun clj-refactor-setup ()
   (clj-refactor-mode 1)
@@ -225,5 +225,6 @@
 (with-eval-after-load 'neotree
   (hl-line-mode 1))
 
+(global-set-key (kbd "C-c C-n") 'neotree-find)
 ;;; init.el ends here
 
