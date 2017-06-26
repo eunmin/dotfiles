@@ -1,230 +1,423 @@
-;; cask
+;;; init.el --- Eunmin Kim Emacs Configuration
+;;; Commentary:
 
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
+;;; Code:
+(require 'package)
+
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+
+(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
 (package-initialize)
 
-(require 'cask "~/.cask/cask.el")
-(cask-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
-(add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(setq load-prefer-newer t)
+(setq gc-cons-threshold 50000000)
+(setq large-file-warning-threshold 100000000)
 
-(setq mac-option-modifier 'meta)
-
-(load-theme 'zenburn t)
-
-(powerline-default-theme)
-
-(setq inhibit-startup-message t)
-(blink-cursor-mode 0)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(setq visible-bell nil)
 (setq ring-bell-function 'ignore)
-(setq mac-option-modifier 'meta)
-(setq mac-command-modifier 'super)
-(setq require-final-newline t)
-(setq show-trailing-whitespace t)
-
-
-(custom-set-variables
- '(cider-inject-dependencies-at-jack-in t)
- '(initial-frame-alist (quote ((fullscreen . maximized))))
- '(safe-local-variable-values
-   (quote
-    ((haskell-process-use-ghci . t)
-     (haskell-indent-spaces . 4))))
- '(split-height-threshold 9999))
-
-(set-face-attribute 'fringe nil :background "#3F3F3F")
-
-(set-default-font "Monaco 13")
-
-;; flat style mode-line
-;(set-face-attribute 'mode-line nil :box nil)
-;(set-face-attribute 'mode-line-inactive nil :box nil)
-
-;; smex
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-
-;; ido
-(setq ido-everywhere t)
-(setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-(defun ido-define-keys ()
-  (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-  (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
-(add-hook 'ido-setup-hook 'ido-define-keys)
-(setq ido-use-virtual-buffers t)
-
-;; enable paredit-mode for lisp
-(add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-
-;; projectile
-(projectile-global-mode)
-
-;; rainbow-delimiters 
-(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'emacs-lisp-mode-hook #'highlight-parentheses-mode)
-
-;; flx-ido
-(flx-ido-mode 1)
-
-;; idle-highlight-mode
-(idle-highlight-mode 1)
-
-;; show line number
-(global-linum-mode 1)
-(setq linum-format "%3d ")
-
-(set-cursor-color "#6F6F6F")
-
-;; virtical line color
+(setq inhibit-startup-screen t)
 (set-face-attribute 'vertical-border nil :foreground "#494949")
 
-;; auto reload file
-(global-auto-revert-mode 1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
 
-;; scrolling
-(setq scroll-step 1 scroll-conservatively 10000)
-(global-set-key [up] (lambda () (interactive) (scroll-down 1)))
-(global-set-key [down] (lambda () (interactive) (scroll-up 1)))
-(global-set-key [left] (lambda () (interactive) (scroll-right tab-width t)))
-(global-set-key [right] (lambda () (interactive) (scroll-left tab-width t)))
+(setq scroll-margin 0
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 1)
 
-;; don't display 'ls does not support --dired' error message
-(setq dired-use-ls-dired nil)
+(fset 'yes-or-no-p 'y-or-n-p)
 
-;; auto-complete
-(global-auto-complete-mode 1)
-(define-key ac-mode-map (kbd "M-SPC") 'auto-complete)
+(setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
 
-;; imenu-anywhere
-(global-set-key (kbd "C-c o") 'imenu-anywhere)
+(setq require-final-newline t)
 
-;; don't make backup file
-(setq make-backup-files nil)
+(delete-selection-mode t)
 
-;; pbcopy for osx
-(turn-on-pbcopy)
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
-(recentf-mode t)
+(global-auto-revert-mode t)
 
-;; clojure-mode
-(add-hook 'clojure-mode-hook #'enable-paredit-mode)
-(setq clojure-defun-style-default-indent t)
+(global-linum-mode 1)
+(setq linum-format "%3d ")
+(set-face-attribute 'linum nil :foreground "#555555")
 
-;; cider
-(setq cider-auto-select-error-buffer nil)
-(setq cider-prompt-save-file-on-load nil)
-(add-hook 'cider-mode-hook #'eldoc-mode)
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
 
-;; ac-cider
-(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
-(add-hook 'cider-mode-hook 'ac-cider-setup)
-(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-(eval-after-load "auto-complete"
-  '(progn
-     (add-to-list 'ac-modes 'cider-mode)
-     (add-to-list 'ac-modes 'cider-repl-mode)))
+(setq hippie-expand-try-functions-list '(try-expand-dabbrev
+                                         try-expand-dabbrev-all-buffers
+                                         try-expand-dabbrev-from-kill
+                                         try-complete-file-name-partially
+                                         try-complete-file-name
+                                         try-expand-all-abbrevs
+                                         try-expand-list
+                                         try-expand-line
+                                         try-complete-lisp-symbol-partially
+                                         try-complete-lisp-symbol))
 
-;; rainbow-delimiters
-(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook #'highlight-parentheses-mode)
+(global-set-key (kbd "M-/") #'hippie-expand)
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(global-set-key (kbd "C-x C-b") #'ibuffer)
 
-;; squiggly-clojure
-;; (eval-after-load 'flycheck '(flycheck-clojure-setup))
-;; (add-hook 'after-init-hook #'global-flycheck-mode)
+(global-set-key (kbd "C-x \\") #'align-regexp)
 
-(defun clj-refactor-setup ()
-  (clj-refactor-mode 1)
+(define-key 'help-command (kbd "C-f") #'find-function)
+(define-key 'help-command (kbd "C-k") #'find-function-on-key)
+(define-key 'help-command (kbd "C-v") #'find-variable)
+(define-key 'help-command (kbd "C-l") #'find-library)
+
+(define-key 'help-command (kbd "C-i") #'info-display-manual)
+
+(global-set-key (kbd "s-<") #'beginning-of-buffer)
+(global-set-key (kbd "s->") #'end-of-buffer)
+(global-set-key (kbd "s-q") #'fill-paragraph)
+(global-set-key (kbd "s-x") #'execute-extended-command)
+
+(setq-default indent-tabs-mode nil)
+(setq tab-always-indent 'complete)
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-verbose t)
+
+(use-package pbcopy
+  :ensure t
+  :config
+  (turn-on-pbcopy))
+
+(use-package lisp-mode
+  :config
+  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+  (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-c") #'eval-defun)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-b") #'eval-buffer)
+  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
+
+(use-package ielm
+  :config
+  (add-hook 'ielm-mode-hook #'eldoc-mode)
+  (add-hook 'ielm-mode-hook #'rainbow-delimiters-mode))
+
+(use-package zenburn-theme
+  :ensure t
+  :config
+  (load-theme 'zenburn t))
+
+(use-package avy
+  :ensure t
+  :bind (("s-." . avy-goto-word-or-subword-1)
+         ("s-," . avy-goto-char))
+  :config
+  (setq avy-background t))
+
+(use-package ag
+  :ensure t)
+
+(use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode +1))
+
+(use-package pt
+  :ensure t)
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
+
+(use-package elisp-slime-nav
+  :ensure t
+  :config
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+    (add-hook hook #'elisp-slime-nav-mode)))
+
+(use-package paredit
+  :ensure t
+  :config
+  (add-hook 'emacs-lisp-mode-hook #'paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'paredit-mode)
+  (add-hook 'ielm-mode-hook #'paredit-mode)
+  (add-hook 'lisp-mode-hook #'paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode))
+
+(use-package paren
+  :config
+  (show-paren-mode +1))
+
+(use-package abbrev
+  :config
+  (setq save-abbrevs 'silently)
+  (setq-default abbrev-mode t))
+
+(use-package uniquify
+  :config
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-separator "/")
+  (setq uniquify-after-kill-buffer-p t)
+  (setq uniquify-ignore-buffers-re "^\\*"))
+
+(use-package windmove
+  :config
+  (windmove-default-keybindings))
+
+(use-package dired
+  :config
+  (put 'dired-find-alternate-file 'disabled nil)
+  (setq dired-recursive-deletes 'always)
+  (setq dired-recursive-copies 'always)
+  (setq dired-dwim-target t)
+  (setq dired-use-ls-dired nil)
+  (require 'dired-x))
+
+(use-package anzu
+  :ensure t
+  :bind (("M-%" . anzu-query-replace)
+         ("C-M-%" . anzu-query-replace-regexp))
+  :config
+  (global-anzu-mode))
+
+(use-package easy-kill
+  :ensure t
+  :config
+  (global-set-key [remap kill-ring-save] 'easy-kill))
+
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (when (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize)))
+
+(use-package move-text
+  :ensure t
+  :bind
+  (([(meta shift up)] . move-text-up)
+   ([(meta shift down)] . move-text-down)))
+
+(use-package rainbow-delimiters
+  :ensure t)
+
+(use-package rainbow-mode
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-mode))
+
+(use-package whitespace
+  :init
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'whitespace-mode))
+  (add-hook 'before-save-hook #'whitespace-cleanup)
+  :config
+  (setq whitespace-line-column 80)
+  (setq whitespace-style '(face tabs empty trailing lines-tail)))
+
+(use-package clojure-mode
+  :ensure t
+  :config
+  (add-hook 'clojure-mode-hook #'paredit-mode)
+  (add-hook 'clojure-mode-hook #'subword-mode)
+  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+  ())
+
+(use-package cider
+  :ensure t
+  :config
+  (add-hook 'cider-mode-hook #'eldoc-mode)
+  (add-hook 'cider-repl-mode-hook #'eldoc-mode)
+  (add-hook 'cider-repl-mode-hook #'paredit-mode)
+  (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
+  (setq clojure-indent-style :always-indent)
+  (setq cider-known-endpoints '(("luminus" "127.0.0.1" "7000"))))
+
+(use-package ido
+  :ensure t
+  :config
+  (setq ido-enable-prefix nil
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-use-filename-at-point 'guess
+        ido-max-prospects 10
+        ido-default-file-method 'selected-window
+        ido-auto-merge-work-directories-length -1)
+  (ido-mode +1))
+
+(use-package ido-ubiquitous
+  :ensure t
+  :config
+  (ido-ubiquitous-mode +1))
+
+(use-package flx-ido
+  :ensure t
+  :config
+  (flx-ido-mode +1)
+  (setq ido-use-faces nil))
+
+(use-package smex
+  :ensure t
+  :bind ("M-x" . smex))
+
+(use-package markdown-mode
+  :ensure t)
+
+(use-package cask-mode
+  :ensure t)
+
+(use-package company
+  :ensure t
+  :config
+  (global-company-mode))
+
+(use-package zop-to-char
+  :ensure t
+  :bind (("M-z" . zop-up-to-char)
+         ("M-Z" . zop-to-char)))
+
+(use-package imenu-anywhere
+  :ensure t
+  :bind (("C-c i" . imenu-anywhere)
+         ("s-i" . imenu-anywhere)))
+
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(use-package super-save
+  :ensure t
+  :config
+  (super-save-mode +1))
+
+(use-package diff-hl
+  :ensure t
+  :config
+  (global-diff-hl-mode +1)
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode +1))
+
+(use-package undo-tree
+  :ensure t
+  :config
+  (setq undo-tree-history-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq undo-tree-auto-save-history t))
+
+(use-package aggressive-indent
+  :ensure t
+  :config
+  (global-aggressive-indent-mode +1))
+
+(use-package clj-refactor
+  :ensure t
+  :config
   (yas-minor-mode 1)
-  (cljr-add-keybindings-with-prefix "C-c C-v"))
+  (cljr-add-keybindings-with-prefix "C-c C-v")
+  (setq cljr-magic-requires nil)
+  (setq cljr-favor-prefix-notation nil)
+  (add-hook 'clojure-mode-hook #'clj-refactor-mode))
 
-(add-hook 'clojure-mode-hook #'clj-refactor-setup)
+;; (use-package tabbar
+;;   :ensure t
+;;   :config
+;;   (tabbar-mode t)
+;;   (global-set-key (kbd "C-x <left>") #'tabbar-backward-tab)
+;;   (global-set-key (kbd "C-x <right>") #'tabbar-forward-tab)
+;;   (setq tabbar-buffer-groups-function (lambda ()
+;;                                         (list "All")))
+;;   (set-face-attribute
+;;    'tabbar-unselected nil
+;;    :background "#777"
+;;    :foreground "#555"))
 
-;; disable magic requires
-(setq cljr-magic-requires nil)
-(setq cljr-favor-prefix-notation nil)
 
-(eval-after-load "sgml-mode"
-  '(progn
-     (require 'tagedit)
-     (tagedit-add-paredit-like-keybindings)
-     (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+(use-package ido
+  :ensure t
+  :config
+  (setq ido-everywhere t)
+  (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+  (defun ido-define-keys ()
+    (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+    (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+  (add-hook 'ido-setup-hook 'ido-define-keys)
+  (setq ido-use-virtual-buffers t))
 
-;; npm install -g jshint
-(add-hook 'js-mode-hook (lambda () (flycheck-mode t)))
+(use-package flx-ido
+  :ensure t)
 
-(setq js-indent-level 2)
+(use-package hindent
+  :ensure t)
 
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(use-package ghc
+  :ensure t)
 
-(global-prettify-symbols-mode 1)
+(use-package haskell-mode
+  :ensure t
+  :config
+  (autoload 'ghc-init "ghc" nil t)
+  (autoload 'ghc-debug "ghc" nil t)
+  (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+  (add-hook 'haskell-mode-hook 'company-mode)
+  (add-hook 'haskell-mode-hook #'hindent-mode)
+  (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+  (setq haskell-tags-on-save t))
 
-(setq enable-local-variables :safe)
+(use-package company-ghc
+  :ensure t
+  :config
+  (setq company-ghc-show-info t))
 
-(setq clojure-indent-style :always-indent)
+(use-package bs
+  :ensure t
+  :config
+  (global-set-key (kbd "C-x <left>") 'bs-cycle-next)
+  (global-set-key (kbd "C-x <right>") 'bs-cycle-previous))
 
-(require 'window-purpose)
-(purpose-mode)
+;; (defun tabbar-buffer-tab-label (tab)
+;;   "Return a label for TAB.
+;; That is, a string used to represent it on the tab bar."
+;;   (let ((label  (if tabbar--buffer-show-groups
+;;                     (format "[%s] " (tabbar-tab-tabset tab))
+;;                   (format "%s " (tabbar-tab-value tab)))))
+;;     (if tabbar-auto-scroll-flag
+;;         label
+;;       (tabbar-shorten
+;;        label (max 1 (/ (window-width)
+;;                        (length (tabbar-view
+;;                                 (tabbar-current-tabset)))))))))
 
-(add-to-list 'purpose-user-mode-purposes '(clojure-mode . clj))
-(add-to-list 'purpose-user-regexp-purposes '("^\\*.+\\*$" . sp))
-(purpose-compile-user-configuration)
-
-(add-to-list 'load-path "~/workspace/go/src/github.com/dougm/goflymake")
-(require 'go-flymake)
-(require 'go-flycheck)
-
-(add-to-list 'load-path "~/workspace/go/src/github.com/nsf/gocode/emacs")
-(require 'go-autocomplete)
-(require 'auto-complete-config)
-(ac-config-default)
-(put 'set-goal-column 'disabled nil)
-
-(setq tabbar-ruler-global-tabbar t)
-(setq tabbar-ruler-global-ruler t)
-
-;; layout
-(defun startup-layout ()
-  (interactive)
-  (delete-other-windows)
-;  (split-window-horizontally 30)
-;  (dired ".")
-;  (dired-hide-details-mode)
-  (next-multiframe-window)
-  (split-window-vertically (- (window-height) 10))
-  (neotree))
-
-(startup-layout)
-
-;; (require 'dired+)
-;; (global-dired-hide-details-mode)
-
-;; (purpose-load-window-layout "eunmin")
-
-(setq projectile-switch-project-action 'neotree-projectile-action)
-
-;(setq neo-auto-indent-point t)
-
-;; (add-hook 'window-configuration-change-hook
-;; 	  (lambda ()
-;; 	    (interactive)
-;; 	    (let* ((filename (buffer-file-name)))
-;; 	      (when filename
-;; 		(neo-global--open-and-find filename)))))
-
-(with-eval-after-load 'neotree
-  (hl-line-mode 1))
-
-(global-set-key (kbd "C-c C-n") 'neotree-find)
 ;;; init.el ends here
-
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere ido-ubiquitous hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag)))
+ '(safe-local-variable-values
+   (quote
+    ((cider-refresh-after-fn . "integrant.repl/resume")
+     (cider-refresh-before-fn . "integrant.repl/suspend")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
