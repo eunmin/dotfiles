@@ -22,7 +22,6 @@
 (set-face-attribute 'vertical-border nil :foreground "#494949")
 
 (menu-bar-mode -1)
-(tool-bar-mode -1)
 
 (setq scroll-margin 0
       scroll-conservatively 100000
@@ -242,17 +241,37 @@
   (setq clojure-indent-style :always-indent)
   (setq cider-known-endpoints '(("luminus" "127.0.0.1" "7000"))))
 
+;; (use-package ido
+;;   :ensure t
+;;   :config
+;;   (setq ido-enable-prefix nil
+;;         ido-enable-flex-matching t
+;;         ido-create-new-buffer 'always
+;;         ido-use-filename-at-point 'guess
+;;         ido-max-prospects 10
+;;         ido-default-file-method 'selected-window
+;;         ido-auto-merge-work-directories-length -1)
+;;   (ido-mode +1))
+
 (use-package ido
   :ensure t
   :config
-  (setq ido-enable-prefix nil
-        ido-enable-flex-matching t
-        ido-create-new-buffer 'always
-        ido-use-filename-at-point 'guess
-        ido-max-prospects 10
-        ido-default-file-method 'selected-window
-        ido-auto-merge-work-directories-length -1)
-  (ido-mode +1))
+  (ido-mode 1))
+
+(use-package ido-vertical-mode
+  :ensure t
+  :config
+  (setq ido-use-faces t)
+  (set-face-attribute 'ido-vertical-first-match-face nil
+                      :background nil
+                      :foreground "orange")
+  (set-face-attribute 'ido-vertical-only-match-face nil
+                      :background nil
+                      :foreground nil)
+  (set-face-attribute 'ido-vertical-match-face nil
+                      :foreground nil)
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+  (ido-vertical-mode 1))
 
 (use-package ido-ubiquitous
   :ensure t
@@ -333,31 +352,6 @@
   (setq cljr-favor-prefix-notation nil)
   (add-hook 'clojure-mode-hook #'clj-refactor-mode))
 
-;; (use-package tabbar
-;;   :ensure t
-;;   :config
-;;   (tabbar-mode t)
-;;   (global-set-key (kbd "C-x <left>") #'tabbar-backward-tab)
-;;   (global-set-key (kbd "C-x <right>") #'tabbar-forward-tab)
-;;   (setq tabbar-buffer-groups-function (lambda ()
-;;                                         (list "All")))
-;;   (set-face-attribute
-;;    'tabbar-unselected nil
-;;    :background "#777"
-;;    :foreground "#555"))
-
-
-(use-package ido
-  :ensure t
-  :config
-  (setq ido-everywhere t)
-  (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-  (defun ido-define-keys ()
-    (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-    (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
-  (add-hook 'ido-setup-hook 'ido-define-keys)
-  (setq ido-use-virtual-buffers t))
-
 (use-package flx-ido
   :ensure t)
 
@@ -388,19 +382,6 @@
   :config
   (global-set-key (kbd "C-x <left>") 'bs-cycle-next)
   (global-set-key (kbd "C-x <right>") 'bs-cycle-previous))
-
-;; (defun tabbar-buffer-tab-label (tab)
-;;   "Return a label for TAB.
-;; That is, a string used to represent it on the tab bar."
-;;   (let ((label  (if tabbar--buffer-show-groups
-;;                     (format "[%s] " (tabbar-tab-tabset tab))
-;;                   (format "%s " (tabbar-tab-value tab)))))
-;;     (if tabbar-auto-scroll-flag
-;;         label
-;;       (tabbar-shorten
-;;        label (max 1 (/ (window-width)
-;;                        (length (tabbar-view
-;;                                 (tabbar-current-tabset)))))))))
 
 ;;; init.el ends here
 (custom-set-variables
