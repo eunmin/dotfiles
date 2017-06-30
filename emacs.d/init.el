@@ -237,6 +237,7 @@
   :ensure t
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
+  (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
   (add-hook 'cider-repl-mode-hook #'eldoc-mode)
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
@@ -249,7 +250,8 @@
              "0.5 sec"
              nil
              '(lambda ()
-                (cider-eval-buffer))))))
+                (when (buffer-file-name)
+                  (cider-eval-buffer)))))))
   (add-hook 'cider-mode-hook
             '(lambda () (add-hook 'after-change-functions 'auto-eval-buffer)))
   (setq cider-prompt-save-file-on-load nil)
@@ -302,7 +304,10 @@
 (use-package company
   :ensure t
   :config
-  (global-company-mode))
+  (global-company-mode)
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 1)
+  (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
 
 (use-package zop-to-char
   :ensure t
