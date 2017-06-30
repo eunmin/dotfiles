@@ -8,3 +8,4 @@ self-installs
 eshell
 .lein-env
 repl-history
+elpa

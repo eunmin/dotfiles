@@ -231,6 +231,8 @@
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
   ())
 
+(defvar eval-timer nil)
+
 (use-package cider
   :ensure t
   :config
@@ -238,20 +240,23 @@
   (add-hook 'cider-repl-mode-hook #'eldoc-mode)
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
+  (defun auto-eval-buffer (begin end length)
+    (when (and (boundp 'cider-mode) cider-mode)
+      (when (timerp eval-timer)
+        (cancel-timer eval-timer))
+      (setq eval-timer
+            (run-at-time
+             "0.5 sec"
+             nil
+             '(lambda ()
+                (cider-eval-buffer))))))
+  (add-hook 'cider-mode-hook
+            '(lambda () (add-hook 'after-change-functions 'auto-eval-buffer)))
+  (setq cider-prompt-save-file-on-load nil)
   (setq clojure-indent-style :always-indent)
+  (setq cider-auto-select-error-buffer nil)
+  (setq cider-auto-jump-to-error nil)
   (setq cider-known-endpoints '(("luminus" "127.0.0.1" "7000"))))
-
-;; (use-package ido
-;;   :ensure t
-;;   :config
-;;   (setq ido-enable-prefix nil
-;;         ido-enable-flex-matching t
-;;         ido-create-new-buffer 'always
-;;         ido-use-filename-at-point 'guess
-;;         ido-max-prospects 10
-;;         ido-default-file-method 'selected-window
-;;         ido-auto-merge-work-directories-length -1)
-;;   (ido-mode +1))
 
 (use-package ido
   :ensure t
