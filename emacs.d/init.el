@@ -234,7 +234,14 @@
 (use-package cider
   :ensure t
   :config
+  (defun cider-format-buffer-back ()
+    (interactive)
+    (let (p)
+      (setq p (point))
+      (cider-format-buffer)
+      (goto-char p)))
   (add-hook 'cider-mode-hook #'eldoc-mode)
+  (add-hook 'before-save-hook 'cider-format-buffer-back 't)
   (add-hook 'cider-repl-mode-hook #'eldoc-mode)
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
@@ -338,11 +345,6 @@
         `((".*" . ,temporary-file-directory)))
   (setq undo-tree-auto-save-history t))
 
-(use-package aggressive-indent
-  :ensure t
-  :config
-  (global-aggressive-indent-mode +1))
-
 (use-package clj-refactor
   :ensure t
   :config
@@ -350,6 +352,7 @@
   (cljr-add-keybindings-with-prefix "C-c C-v")
   (setq cljr-magic-requires nil)
   (setq cljr-favor-prefix-notation nil)
+  (setq cljr-auto-clean-ns nil)
   (add-hook 'clojure-mode-hook #'clj-refactor-mode))
 
 (use-package flx-ido
@@ -382,6 +385,24 @@
   :config
   (global-set-key (kbd "C-x <left>") 'bs-cycle-next)
   (global-set-key (kbd "C-x <right>") 'bs-cycle-previous))
+
+(use-package elm-mode
+  :ensure t
+  :config
+  (add-hook 'elm-mode-hook
+            (lambda ()
+              (setq company-backends '(company-elm)))))
+
+(use-package flycheck-elm
+  :ensure t
+  :config
+  (add-hook 'flycheck-mode-hook 'flycheck-elm-setup))
+
+(use-package elm-oracle
+  :ensure t)
+
+(use-package hungry-delete
+  :ensure t)
 
 ;;; init.el ends here
 (custom-set-variables
