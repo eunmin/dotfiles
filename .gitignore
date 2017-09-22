@@ -11,3 +11,5 @@ repl-history
 .mc-lists.el
 elpa
 projectile.cache
+elpa
+.last-package-update-day

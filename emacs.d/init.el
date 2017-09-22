@@ -13,6 +13,12 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+(when (display-graphic-p)
+  (progn
+    (tool-bar-mode -1)
+    (set-frame-font "Monaco 14")
+    (toggle-frame-maximized)))
+
 (setq load-prefer-newer t)
 (setq gc-cons-threshold 50000000)
 (setq large-file-warning-threshold 100000000)
@@ -229,7 +235,9 @@
   (add-hook 'clojure-mode-hook #'paredit-mode)
   (add-hook 'clojure-mode-hook #'subword-mode)
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-  ())
+  (setq clojure-indent-style :align-arguments))
+
+(defvar eval-timer nil)
 
 (use-package cider
   :ensure t
@@ -242,28 +250,36 @@
       (goto-char p)))
   (add-hook 'cider-mode-hook #'eldoc-mode)
   (add-hook 'before-save-hook 'cider-format-buffer-back 't)
+  (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
   (add-hook 'cider-repl-mode-hook #'eldoc-mode)
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
-  (setq clojure-indent-style :always-indent)
-  (setq cider-known-endpoints '(("luminus" "127.0.0.1" "7000"))))
+  (defun auto-eval-buffer (begin end length)
+    (when (and (boundp 'cider-mode) cider-mode)
+      (when (timerp eval-timer)
+        (cancel-timer eval-timer))
+      (setq eval-timer
+            (run-at-time
+             "0.5 sec"
+             nil
+             '(lambda ()
+                (when (buffer-file-name)
+                  (cider-eval-buffer)))))))
+  ;; (add-hook 'cider-mode-hook
+  ;;           '(lambda () (add-hook 'after-change-functions 'auto-eval-buffer)))
+  (setq cider-prompt-save-file-on-load nil)
+  (setq cider-auto-select-error-buffer nil)
+  (setq cider-auto-jump-to-error nil)
+  (setq cider-auto-select-test-report-buffer nil)
+  (cider-auto-test-mode 1))
+
+(use-package memoize
+  :ensure t)
 
 ;; (use-package ido
 ;;   :ensure t
 ;;   :config
-;;   (setq ido-enable-prefix nil
-;;         ido-enable-flex-matching t
-;;         ido-create-new-buffer 'always
-;;         ido-use-filename-at-point 'guess
-;;         ido-max-prospects 10
-;;         ido-default-file-method 'selected-window
-;;         ido-auto-merge-work-directories-length -1)
-;;   (ido-mode +1))
-
-(use-package ido
-  :ensure t
-  :config
-  (ido-mode 1))
+;;   (ido-mode 1))
 
 (use-package ido-vertical-mode
   :ensure t
@@ -280,18 +296,16 @@
   (setq ido-vertical-define-keys 'C-n-and-C-p-only)
   (ido-vertical-mode 1))
 
-(use-package ido-ubiquitous
-  :ensure t
-  :config
-  (ido-ubiquitous-mode +1))
-
 (use-package flx-ido
   :ensure t
   :config
-  (flx-ido-mode +1)
-  (setq ido-use-faces nil))
+  (flx-ido-mode 1))
 
 (use-package smex
+  ;; Smex is a M-x enhancement for Emacs. Built on top of Ido, it provides
+  ;; a convenient interface to your recently and most frequently used commands.
+  ;; And to all the other commands, too.
+  ;; https://github.com/nonsequitur/smex
   :ensure t
   :bind ("M-x" . smex))
 
@@ -304,7 +318,10 @@
 (use-package company
   :ensure t
   :config
-  (global-company-mode))
+  (global-company-mode)
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 1)
+  (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
 
 (use-package zop-to-char
   :ensure t
@@ -320,11 +337,6 @@
   :ensure t
   :config
   (add-hook 'after-init-hook #'global-flycheck-mode))
-
-(use-package super-save
-  :ensure t
-  :config
-  (super-save-mode +1))
 
 (use-package diff-hl
   :ensure t
@@ -344,6 +356,11 @@
   (setq undo-tree-history-directory-alist
         `((".*" . ,temporary-file-directory)))
   (setq undo-tree-auto-save-history t))
+
+(use-package aggressive-indent
+  :ensure t
+  :config
+  (add-hook 'clojure-mode-hook #'aggressive-indent-mode))
 
 (use-package clj-refactor
   :ensure t
@@ -402,7 +419,15 @@
   :ensure t)
 
 (use-package hungry-delete
-  :ensure t)
+  :ensure t
+  :pin melpa)
+
+(use-package auto-package-update
+   :ensure t
+   :config
+   (setq auto-package-update-delete-old-versions t
+         auto-package-update-interval 7)
+   (auto-package-update-maybe))
 
 ;;; init.el ends here
 (custom-set-variables
@@ -412,7 +437,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere ido-ubiquitous hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag)))
+    (elm-mode ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag)))
  '(safe-local-variable-values
    (quote
     ((cider-refresh-after-fn . "integrant.repl/resume")
