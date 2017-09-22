@@ -235,7 +235,7 @@
   (add-hook 'clojure-mode-hook #'paredit-mode)
   (add-hook 'clojure-mode-hook #'subword-mode)
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-  ())
+  (setq clojure-indent-style :align-arguments))
 
 (defvar eval-timer nil)
 
@@ -261,18 +261,18 @@
   ;; (add-hook 'cider-mode-hook
   ;;           '(lambda () (add-hook 'after-change-functions 'auto-eval-buffer)))
   (setq cider-prompt-save-file-on-load nil)
-  (setq clojure-indent-style :always-indent)
   (setq cider-auto-select-error-buffer nil)
   (setq cider-auto-jump-to-error nil)
-  (setq cider-known-endpoints '(("luminus" "127.0.0.1" "7000"))))
+  (setq cider-auto-select-test-report-buffer nil)
+  (cider-auto-test-mode 1))
 
 (use-package memoize
   :ensure t)
 
-(use-package ido
-  :ensure t
-  :config
-  (ido-mode 1))
+;; (use-package ido
+;;   :ensure t
+;;   :config
+;;   (ido-mode 1))
 
 (use-package ido-vertical-mode
   :ensure t
@@ -296,6 +296,10 @@
   (setq ido-use-faces nil))
 
 (use-package smex
+  ;; Smex is a M-x enhancement for Emacs. Built on top of Ido, it provides
+  ;; a convenient interface to your recently and most frequently used commands.
+  ;; And to all the other commands, too.
+  ;; https://github.com/nonsequitur/smex
   :ensure t
   :bind ("M-x" . smex))
 
@@ -347,10 +351,10 @@
         `((".*" . ,temporary-file-directory)))
   (setq undo-tree-auto-save-history t))
 
-;; (use-package aggressive-indent
-;;   :ensure t
-;;   :config
-;;   (global-aggressive-indent-mode +1))
+(use-package aggressive-indent
+  :ensure t
+  :config
+  (add-hook 'clojure-mode-hook #'aggressive-indent-mode))
 
 (use-package clj-refactor
   :ensure t
