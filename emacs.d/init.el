@@ -292,8 +292,7 @@
 (use-package flx-ido
   :ensure t
   :config
-  (flx-ido-mode +1)
-  (setq ido-use-faces nil))
+  (flx-ido-mode 1))
 
 (use-package smex
   ;; Smex is a M-x enhancement for Emacs. Built on top of Ido, it provides
