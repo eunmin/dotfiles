@@ -235,7 +235,6 @@
              (add-hook 'clojure-mode-hook #'paredit-mode)
              (add-hook 'clojure-mode-hook #'subword-mode)
              (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-;;             (setq clojure-indent-style :align-arguments)
              (define-clojure-indent
                (ANY 2)
                (DELETE 2)
@@ -262,7 +261,7 @@
                  (cider-format-buffer)
                  (goto-char p)))
              (add-hook 'cider-mode-hook #'eldoc-mode)
-;;             (add-hook 'before-save-hook 'cider-format-buffer-back 't)
+             (add-hook 'before-save-hook 'cider-format-buffer-back 't)
              (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
              (add-hook 'cider-repl-mode-hook #'eldoc-mode)
              (add-hook 'cider-repl-mode-hook #'paredit-mode)
@@ -347,9 +346,19 @@
                     ("s-i" . imenu-anywhere)))
 
 (use-package flycheck
-             :ensure t
-             :config
-             (add-hook 'after-init-hook #'global-flycheck-mode))
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(use-package flycheck-popup-tip
+  :ensure t
+  :config
+  (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
+
+(use-package flycheck-clojure
+  :ensure t
+  :config
+  (eval-after-load 'flycheck '(flycheck-clojure-setup)))
 
 (use-package diff-hl
              :ensure t
@@ -428,9 +437,6 @@
              :config
              (add-hook 'flycheck-mode-hook 'flycheck-elm-setup))
 
-(use-package elm-oracle
-             :ensure t)
-
 (use-package hungry-delete
              :ensure t
              :pin melpa)
@@ -448,7 +454,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (elm-oracle elm-mode ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag)))
+    (flycheck-tip elm-oracle elm-mode ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag)))
  '(safe-local-variable-values
    (quote
     ((cider-refresh-after-fn . "integrant.repl/resume")
