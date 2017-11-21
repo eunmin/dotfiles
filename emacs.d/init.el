@@ -342,24 +342,24 @@
 
 (use-package imenu-anywhere
              :ensure t
-             :bind (("C-c i" . imenu-anywhere)
+             :bind (("C-c i" . ido-imenu-anywhere)
                     ("s-i" . imenu-anywhere)))
 
 (use-package flycheck
-  :ensure t
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (setq-default flycheck-disabled-checkers '(clojure-cider-typed)))
+             :ensure t
+             :config
+             (add-hook 'after-init-hook #'global-flycheck-mode)
+             (setq-default flycheck-disabled-checkers '(clojure-cider-typed)))
 
 (use-package flycheck-popup-tip
-  :ensure t
-  :config
-  (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
+             :ensure t
+             :config
+             (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
 
 (use-package flycheck-clojure
-  :ensure t
-  :config
-  (eval-after-load 'flycheck '(flycheck-clojure-setup)))
+             :ensure t
+             :config
+             (eval-after-load 'flycheck '(flycheck-clojure-setup)))
 
 (use-package diff-hl
              :ensure t
@@ -420,6 +420,11 @@
              :config
              (setq company-ghc-show-info t))
 
+(use-package flycheck-haskell
+             :ensure t
+             :config
+             (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
+
 (use-package bs
              :ensure t
              :config
@@ -465,4 +470,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+)
