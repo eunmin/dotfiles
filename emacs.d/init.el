@@ -16,6 +16,7 @@
 (when (display-graphic-p)
   (progn
    (tool-bar-mode -1)
+   (scroll-bar-mode -1)
    (set-frame-font "Monaco 14")
    (toggle-frame-maximized)))
 
@@ -117,10 +118,16 @@
              (add-hook 'ielm-mode-hook #'eldoc-mode)
              (add-hook 'ielm-mode-hook #'rainbow-delimiters-mode))
 
-(use-package zenburn-theme
+;; (use-package zenburn-theme
+;;              :ensure t
+;;              :config
+;;              (load-theme 'zenburn t)
+;;              (set-face-attribute 'fringe nil :background "#3F3F3F" :foreground "#3F3F3F"))
+
+(use-package color-theme-sanityinc-tomorrow
              :ensure t
              :config
-             (load-theme 'zenburn t))
+             (load-theme 'sanityinc-tomorrow-day t))
 
 (use-package avy
              :ensure t
@@ -425,6 +432,11 @@
              :config
              (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
 
+(use-package intero
+             :ensure t
+             :config
+             (add-hook 'haskell-mode-hook 'intero-mode))
+
 (use-package bs
              :ensure t
              :config
@@ -452,22 +464,34 @@
              :config
              (global-set-key (kbd "C-c C-i") 'string-inflection-all-cycle))
 
+(use-package goto-last-change
+             :ensure t
+             :config
+             (global-set-key (kbd "C-x C-\\") 'goto-last-change))
+
+(use-package typed-clojure-mode
+             :ensure t
+             :config
+             (add-hook 'clojure-mode-hook 'typed-clojure-mode))
+
+(use-package go-mode
+  :ensure t)
+
 ;;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
  '(package-selected-packages
    (quote
-    (flycheck-tip elm-oracle elm-mode ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag)))
- '(safe-local-variable-values
-   (quote
-    ((cider-refresh-after-fn . "integrant.repl/resume")
-     (cider-refresh-before-fn . "integrant.repl/suspend")))))
+    (color-theme-sanityinc-tomorrow cider flycheck-tip elm-oracle elm-mode ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-)
+ )

@@ -13,3 +13,5 @@ elpa
 projectile.cache
 elpa
 .last-package-update-day
+ido.last
+.DS_Store
