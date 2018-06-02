@@ -264,10 +264,11 @@
              (add-hook 'cider-repl-mode-hook #'eldoc-mode)
              (add-hook 'cider-repl-mode-hook #'paredit-mode)
              (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
-             (setq cider-prompt-save-file-on-load nil)
+             (setq cider-save-file-on-load nil)
              (setq cider-auto-select-error-buffer nil)
              (setq cider-auto-jump-to-error nil)
-             (setq cider-auto-select-test-report-buffer nil))
+             (setq cider-auto-select-test-report-buffer nil)
+             (setq cider-repl-use-pretty-printing t))
 
 (use-package memoize
              :ensure t)
