@@ -261,36 +261,15 @@
 (use-package cider
              :ensure t
              :config
-             (defun cider-format-buffer-back ()
-               (interactive)
-               (let (p)
-                 (setq p (point))
-                 (cider-format-buffer)
-                 (goto-char p)))
              (add-hook 'cider-mode-hook #'eldoc-mode)
-             (add-hook 'before-save-hook 'cider-format-buffer-back 't)
              (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
              (add-hook 'cider-repl-mode-hook #'eldoc-mode)
              (add-hook 'cider-repl-mode-hook #'paredit-mode)
              (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
-             (defun auto-eval-buffer (begin end length)
-               (when (and (boundp 'cider-mode) cider-mode)
-                 (when (timerp eval-timer)
-                   (cancel-timer eval-timer))
-                 (setq eval-timer
-                       (run-at-time
-                        "0.5 sec"
-                        nil
-                        '(lambda ()
-                                 (when (buffer-file-name)
-                                   (cider-eval-buffer)))))))
-  ;; (add-hook 'cider-mode-hook
-  ;;           '(lambda () (add-hook 'after-change-functions 'auto-eval-buffer)))
              (setq cider-prompt-save-file-on-load nil)
              (setq cider-auto-select-error-buffer nil)
              (setq cider-auto-jump-to-error nil)
-             (setq cider-auto-select-test-report-buffer nil)
-             (cider-auto-test-mode 1))
+             (setq cider-auto-select-test-report-buffer nil))
 
 (use-package memoize
              :ensure t)
@@ -355,8 +334,7 @@
 (use-package flycheck
              :ensure t
              :config
-             (add-hook 'after-init-hook #'global-flycheck-mode)
-             (setq-default flycheck-disabled-checkers '(clojure-cider-typed)))
+             (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (use-package flycheck-popup-tip
              :ensure t
@@ -469,13 +447,12 @@
              :config
              (global-set-key (kbd "C-x C-\\") 'goto-last-change))
 
-(use-package typed-clojure-mode
-             :ensure t
-             :config
-             (add-hook 'clojure-mode-hook 'typed-clojure-mode))
-
 (use-package go-mode
-             :ensure t)
+  :ensure t
+  :config
+  (add-hook 'go-mode-hook (lambda ()
+                            (setq tab-width 4)
+                            (setq indent-tabs-mode nil))))
 
 (use-package yaml-mode
   :ensure t)
@@ -490,20 +467,3 @@
   (dashboard-setup-startup-hook))
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
- '(package-selected-packages
-   (quote
-    (color-theme-sanityinc-tomorrow cider flycheck-tip elm-oracle elm-mode ghc zop-to-char zenburn-theme yaml-mode which-key use-package undo-tree tabbar super-save smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text markdown-mode magit inf-ruby imenu-anywhere hindent haskell-mode flycheck flx-ido expand-region exec-path-from-shell erlang elixir-mode elisp-slime-nav easy-kill diff-hl crux company clj-refactor cask-mode avy anzu aggressive-indent ag))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
