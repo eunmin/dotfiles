@@ -455,6 +455,11 @@
 (use-package yaml-mode
   :ensure t)
 
+(use-package swiper
+  :ensure t
+  :config
+  (global-set-key "\C-s" 'swiper))
+
 (use-package dashboard
   :ensure t
   :config
@@ -465,3 +470,17 @@
   (dashboard-setup-startup-hook))
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (swiper zop-to-char yaml-mode which-key use-package undo-tree string-inflection smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text memoize markdown-mode intero imenu-anywhere ido-vertical-mode hungry-delete hindent goto-last-change go-mode flycheck-popup-tip flycheck-haskell flycheck-elm flycheck-clojure flx-ido expand-region exec-path-from-shell elm-mode elisp-slime-nav easy-kill diff-hl dashboard company-ghc color-theme-sanityinc-tomorrow clj-refactor cask-mode avy anzu aggressive-indent ag))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
