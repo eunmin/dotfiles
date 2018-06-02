@@ -28,8 +28,6 @@
 (setq inhibit-startup-screen t)
 (set-face-attribute 'vertical-border nil :foreground "#494949")
 
-(menu-bar-mode -1)
-
 (setq scroll-margin 0
       scroll-conservatively 100000
       scroll-preserve-screen-position 1)
