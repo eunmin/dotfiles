@@ -143,6 +143,7 @@
   :ensure t
   :init
   (setq projectile-completion-system 'ivy)
+  (setq projectile-keymap-prefix (kbd "C-c p"))
   :config
   (projectile-global-mode +1))
 
@@ -304,38 +305,6 @@
   (global-set-key (kbd "C-c a") 'counsel-ag)
   (global-set-key (kbd "C-x l") 'counsel-locate)
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
-;; (use-package ido
-;;   :ensure t
-;;   :config
-;;   (ido-mode 1))
-
-;; (use-package ido-vertical-mode
-;;              :ensure t
-;;              :config
-;;              (setq ido-use-faces t)
-;;              (set-face-attribute 'ido-vertical-first-match-face nil
-;;                                  :background nil
-;;                                  :foreground "orange")
-;;              (set-face-attribute 'ido-vertical-only-match-face nil
-;;                                  :background nil
-;;                                  :foreground nil)
-;;              (set-face-attribute 'ido-vertical-match-face nil
-;;                                  :foreground nil)
-;;              (setq ido-vertical-define-keys 'C-n-and-C-p-only)
-;;              (ido-vertical-mode 1))
-
-;; (use-package flx-ido
-;;              :ensure t
-;;              :config
-;;              (flx-ido-mode 1))
-
-;; (use-package smex
-;;   ;; Smex is a M-x enhancement for Emacs. Built on top of Ido, it provides
-;;   ;; a convenient interface to your recently and most frequently used commands.
-;;   ;; And to all the other commands, too.
-;;   ;; https://github.com/nonsequitur/smex
-;;              :ensure t
-;;              :bind ("M-x" . smex))
 
 (use-package markdown-mode
   :ensure t)
@@ -361,21 +330,20 @@
   :bind (("C-c i" . ido-imenu-anywhere)
          ("s-i" . imenu-anywhere)))
 
-(use-package flycheck
-  :ensure t
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (setq-default flycheck-disabled-checkers '(clojure-cider-typed)))
+;; (use-package flycheck
+;;   :ensure t
+;;   :config
+;;   (add-hook 'after-init-hook #'global-flycheck-mode))
 
-(use-package flycheck-popup-tip
-  :ensure t
-  :config
-  (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
+;; (use-package flycheck-popup-tip
+;;   :ensure t
+;;   :config
+;;   (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
 
-(use-package flycheck-clojure
-  :ensure t
-  :config
-  (eval-after-load 'flycheck '(flycheck-clojure-setup)))
+;; (use-package flycheck-clojure
+;;   :ensure t
+;;   :config
+;;   (eval-after-load 'flycheck '(flycheck-clojure-setup)))
 
 (use-package diff-hl
   :ensure t
@@ -502,6 +470,9 @@
                           (recents  . 20)))
   (dashboard-setup-startup-hook))
 
+(use-package flycheck-joker
+  :ensure t)
+
 ;;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -510,7 +481,11 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (swiper zop-to-char yaml-mode which-key use-package undo-tree string-inflection smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text memoize markdown-mode intero imenu-anywhere ido-vertical-mode hungry-delete hindent goto-last-change go-mode flycheck-popup-tip flycheck-haskell flycheck-elm flycheck-clojure flx-ido expand-region exec-path-from-shell elm-mode elisp-slime-nav easy-kill diff-hl dashboard company-ghc color-theme-sanityinc-tomorrow clj-refactor cask-mode avy anzu aggressive-indent ag))))
+    (swiper zop-to-char yaml-mode which-key use-package undo-tree string-inflection smex rainbow-mode rainbow-delimiters pt projectile pbcopy move-text memoize markdown-mode intero imenu-anywhere ido-vertical-mode hungry-delete hindent goto-last-change go-mode flycheck-popup-tip flycheck-haskell flycheck-elm flycheck-clojure flx-ido expand-region exec-path-from-shell elm-mode elisp-slime-nav easy-kill diff-hl dashboard company-ghc color-theme-sanityinc-tomorrow clj-refactor cask-mode avy anzu aggressive-indent ag)))
+ '(safe-local-variable-values
+   (quote
+    ((cider-refresh-after-fn . "integrant.repl/resume")
+     (cider-refresh-before-fn . "integrant.repl/suspend")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
