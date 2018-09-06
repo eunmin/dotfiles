@@ -330,20 +330,20 @@
   :bind (("C-c i" . ido-imenu-anywhere)
          ("s-i" . imenu-anywhere)))
 
-;; (use-package flycheck
-;;   :ensure t
-;;   :config
-;;   (add-hook 'after-init-hook #'global-flycheck-mode))
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 
-;; (use-package flycheck-popup-tip
-;;   :ensure t
-;;   :config
-;;   (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
+(use-package flycheck-popup-tip
+  :ensure t
+  :config
+  (eval-after-load 'flycheck (flycheck-popup-tip-mode)))
 
-;; (use-package flycheck-clojure
-;;   :ensure t
-;;   :config
-;;   (eval-after-load 'flycheck '(flycheck-clojure-setup)))
+(use-package flycheck-clojure
+  :ensure t
+  :config
+  (eval-after-load 'flycheck '(flycheck-clojure-setup)))
 
 (use-package diff-hl
   :ensure t
@@ -469,9 +469,6 @@
   (setq dashboard-items '((projects . 20)
                           (recents  . 20)))
   (dashboard-setup-startup-hook))
-
-(use-package flycheck-joker
-  :ensure t)
 
 ;;; init.el ends here
 (custom-set-variables
