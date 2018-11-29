@@ -140,6 +140,9 @@
 (use-package scala-mode
   :ensure t)
 
+(use-package haskell-mode
+  :ensure t)
+
 (defun find-buffer-regex (reg)
   (interactive)
   (remove-if-not #'(lambda (x) (string-match reg x))
