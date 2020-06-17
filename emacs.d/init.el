@@ -4,6 +4,15 @@
 
 (package-initialize)
 
+(let ((is-emacs-mac-by-yamamaoto
+       (and (boundp 'mac-carbon-version-string)
+            (string= window-system "mac"))))
+  (setq mac-option-modifier 'meta)
+  (setq mac-command-modifier nil)
+  (setq mac-pass-command-to-system 't)
+  (mac-auto-operator-composition-mode)
+  (setq ring-bell-function 'ignore))
+
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -11,10 +20,8 @@
   (progn
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
-    (set-frame-font "Monaco 14")
+    (set-frame-font "Fira Code Retina 13")
     (toggle-frame-maximized)))
-
-(setq gc-cons-threshold 50000000)
 
 (setq inhibit-startup-screen t)
 
@@ -22,6 +29,7 @@
 
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
+
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
@@ -29,6 +37,10 @@
 
 (global-linum-mode 1)
 (setq linum-format "%3d ")
+(set-default 'line-spacing 0.1)
+(set-default 'truncate-lines t)
+
+(delete-selection-mode 1)
 
 (setq column-number-mode t)
 
@@ -37,6 +49,11 @@
 
 (require 'use-package)
 
+;; (use-package base16-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'base16-tomorrow t))
+
 (use-package color-theme-sanityinc-tomorrow
   :ensure t
   :config
@@ -44,14 +61,29 @@
 
 (use-package paredit
   :ensure t
-  :hook ((clojure-mode cider-repl-mode) . paredit-mode))
+  :hook ((emacs-lisp-mode clojure-mode cider-repl-mode) . paredit-mode))
 
 (use-package rainbow-delimiters
   :ensure t
   :hook (clojure-mode . rainbow-delimiters-mode))
 
-(use-package clojure-mode
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+(use-package flycheck-clj-kondo
   :ensure t)
+
+(use-package clojure-mode
+  :ensure t
+  :config
+  (progn
+    (require 'flycheck-clj-kondo)
+    (setq clojure-align-forms-automatically t)
+    (setq clojure-align-binding-forms nil)
+    (setq clojure-align-cond-forms nil)
+    (define-clojure-indent
+      (cond-> 0))))
 
 (use-package cider
   :ensure t
@@ -61,17 +93,12 @@
   (add-hook 'cider-repl-mode-hook #'eldoc-mode)
   (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode)
-  (setq cider-save-file-on-load nil)
+  (setq cider-save-file-on-load t)
   (setq cider-auto-select-error-buffer nil)
-;;  (setq cider-auto-jump-to-error nil)
   (setq cider-auto-select-test-report-buffer nil)
   (setq cider-repl-use-pretty-printing t)
-  (setq cider-repl-display-help-banner nil))
-
-;; (use-package aggressive-indent
-;;   :ensure t
-;;   :config
-;;   (add-hook 'clojure-mode-hook #'aggressive-indent-mode))
+  (setq cider-repl-display-help-banner nil)
+  (setq cljr-warn-on-eval nil))
 
 (use-package clj-refactor
   :ensure t
@@ -86,9 +113,14 @@
   :ensure t
   :init
   (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 2)
+  (setq company-minimum-prefix-length 1)
   :config
   (global-company-mode))
+
+(use-package company-statistics
+  :ensure t
+  :config
+  (company-statistics-mode))
 
 (use-package projectile
   :ensure t
@@ -120,28 +152,67 @@
 
 (use-package expand-region
   :ensure t
-  :config
-  (global-set-key (kbd "C-*") 'er/expand-region))
+  :bind
+  ("C-=" . er/expand-region)
+  ("C--". er/contract-region))
 
 (use-package multiple-cursors
   :ensure t
   :config
   (define-key mc/keymap (kbd "<return>") nil))
 
-(use-package graphql-mode
+(use-package command-log-mode
   :ensure t)
 
-(use-package ensime
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
+        (setq markdown-fontify-code-blocks-natively t))
+
+(use-package edit-indirect
   :ensure t)
 
-(use-package sbt-mode
+(use-package centaur-tabs
+  :ensure t
+  :demand
+  :config
+  (centaur-tabs-mode t)
+  (setq centaur-tabs-set-close-button nil)
+  (setq centaur-tabs-set-modified-marker t)
+  (centaur-tabs-group-by-projectile-project)
+  (setq centaur-tabs-modified-marker "*")
+  :bind
+  ("C-<prior>" . centaur-tabs-backward)
+  ("C-<next>" . centaur-tabs-forward))
+
+(use-package magit
   :ensure t)
 
-(use-package scala-mode
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+  (treemacs-resize-icons 16)
+  (add-hook 'projectile-after-switch-project-hook 'treemacs-display-current-project-exclusively)
+  :bind
+  (:map global-map
+	("C-x t t" . treemacs)))
+
+(use-package treemacs-projectile
+  :after treemacs projectile
   :ensure t)
 
-(use-package haskell-mode
+(use-package treemacs-magit
+  :after treemacs magit
   :ensure t)
+
+(require 'cl)
 
 (defun find-buffer-regex (reg)
   (interactive)
@@ -157,35 +228,40 @@
 
 (defun nrepl-reset ()
   (interactive)
-  (cider-execute "(reset)"))
+  (cider-execute "(reset)")
+  (message "Reset"))
+
 (define-key cider-mode-map (kbd "C-c r") 'nrepl-reset)
 
-(defun nrepl-test ()
+(defun start-cider-repl-with-profile ()
   (interactive)
-  (cider-execute "(test)"))
-(define-key cider-mode-map (kbd "C-c t") 'nrepl-test)
+  (letrec ((profile (read-string "Enter profile name: "))
+           (lein-params (concat "with-profile " profile " repl :headless")))
+    (message "lein-params set to: %s" lein-params)
+    (set-variable 'cider-lein-parameters lein-params)
+    (cider-jack-in '())))
+
+(defun start-cider-with-local-profile ()
+  (interactive)
+  (set-variable 'cider-lein-parameters "with-profile +db/local,+env/local repl :headless")
+  (cider-jack-in '()))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("b59d7adea7873d58160d368d42828e7ac670340f11f36f67fa8071dbf957236a" default)))
+ '(helm-completion-style (quote emacs))
  '(package-selected-packages
    (quote
-    (helm-ag ensime graphql-mode expand-region airline-themes powerline helm-projectile helm rainbow-delimiters paredit color-theme-sanityinc-tomorrow use-package)))
+    (highlight-symbol flycheck-clj-kondo base16-theme magit helm-ag treemacs-projectile treemacs centaur-tabs edit-indirect markdown-mode command-log-mode expand-region airline-themes powerline helm-projectile helm projectile company-statistics company clj-refactor cider clojure-mode rainbow-delimiters paredit color-theme-sanityinc-tomorrow use-package)))
  '(safe-local-variable-values
    (quote
     ((cider-ns-refresh-after-fn . "integrant.repl/resume")
-     (cider-ns-refresh-before-fn . "integrant.repl/suspend")
-     (cider-refresh-after-fn . "integrant.repl/resume")
-     (cider-refresh-before-fn . "integrant.repl/suspend")))))
+     (cider-ns-refresh-before-fn . "integrant.repl/suspend")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
