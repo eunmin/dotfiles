@@ -401,8 +401,6 @@
 ;;     (re-search-forward ":refer")
 ;;     (newline)))
 
-(set-cursor-color "#EBCB8B")
-
 ;;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
