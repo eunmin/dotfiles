@@ -140,6 +140,15 @@
   :config
   (spaceline-spacemacs-theme))
 
+;; 선택되지 않은 버퍼를 조금 흐리게 표시
+(use-package dimmer
+  :custom (dimmer-fraction 0.4)
+  :config (dimmer-mode))
+
+;; 라인으로 빠르게 이동하기
+(use-package avy
+  :bind ("C-c l" . avy-goto-line))
+
 ;; 윈도우 전환을 커맨드 + 방향키로 할 수 있도록
 (use-package windmove
   :config
@@ -211,15 +220,24 @@
 
 ;; 문법 체크를 위한 패키지
 (use-package flycheck
-  :hook (after-init . global-flycheck-mode))
+  :custom
+  (flycheck-emacs-lisp-initialize-packages t)
+  (flycheck-display-errors-delay 0.1)
+  :config
+  (global-flycheck-mode)
+  (flycheck-set-indication-mode 'left-margin))
 
 ;; 문법 체크 결과를 팝업으로 표시
-(use-package flycheck-popup-tip
-  :hook (flycheck-mode . flycheck-popup-tip-mode)
-  :config
-  ;; 툴 팁 뜰 때 앞에 구분자를 *로 지정
-  (custom-set-variables
-   '(flycheck-popup-tip-error-prefix "* ")))
+;; (use-package flycheck-popup-tip
+;;   :hook (flycheck-mode . flycheck-popup-tip-mode)
+;;   :config
+;;   ;; 툴 팁 뜰 때 앞에 구분자를 *로 지정
+;;   (custom-set-variables
+;;    '(flycheck-popup-tip-error-prefix "* ")))
+
+;; 문법 체크 메시지를 인라인으로 표시
+(use-package flycheck-inline
+  :config (global-flycheck-inline-mode))
 
 ;; 자동 완성
 (use-package company
@@ -352,6 +370,8 @@
 (use-package yasnippet
   :hook (clojure-mode . yas-minor-mode))
 
+
+
 ;; repl에 reset 커맨드를 실행 시켜주는 기능
 ;; (defun find-buffer-regex (reg)
 ;;   (interactive)
@@ -409,7 +429,7 @@
  ;; If there is more than one, they won't work right.
  '(flycheck-popup-tip-error-prefix "* ")
  '(package-selected-packages
-   '(counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
+   '(flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
