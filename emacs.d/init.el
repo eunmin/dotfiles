@@ -28,9 +28,6 @@
 ;; 커서 깜빡이지 않게 하기
 (blink-cursor-mode -1)
 
-;; 커서 색상
-(set-cursor-color "#EBCB8B")
-
 ;; 시작 화면 안나오게 하기
 (setq inhibit-startup-screen t)
 
@@ -95,6 +92,10 @@
 ;; 120 라인이 넘어갈 때만 자동으로 세로로 창 분할하기
 (setq split-height-threshold 120)
 
+;; 240 라인이 넘어갈 때만 자동으로 가로로 창 분할하기
+(setq split-width-threshold 240)
+
+
 ;; 전체 창이 작아저도 라인이 짤리지 않도록 하기
 (set-default 'truncate-lines t)
 
@@ -135,6 +136,9 @@
   :config
   (load-theme 'nord t))
 
+;; 커서 색상
+(set-cursor-color "#EBCB8B")
+
 ;; 상태바 테마
 (use-package spaceline
   :config
@@ -142,7 +146,7 @@
 
 ;; 선택되지 않은 버퍼를 조금 흐리게 표시
 (use-package dimmer
-  :custom (dimmer-fraction 0.4)
+  :custom (dimmer-fraction 0.3)
   :config (dimmer-mode))
 
 ;; 라인으로 빠르게 이동하기
@@ -188,6 +192,7 @@
 ;;  :defer t
   :config
   (treemacs-resize-icons 14)
+  (setq treemacs-width 45)
   :bind
   (:map global-map ("s-t" . treemacs)))
 
@@ -272,8 +277,68 @@
   :config
   (progn
     (helm-mode 1)
-    (setq helm-autoresize-mode t)
+    (setq helm-display-buffer-width 200)
+    (setq helm-display-buffer-height 40)
+    (setq helm-display-function 'helm-display-buffer-in-own-frame-center)
     (global-set-key (kbd "M-x") 'helm-M-x)))
+
+;; helm 버퍼를 화면 가운데 띄우기 위한 함수
+(defun helm-display-buffer-in-own-frame-center (buffer &optional resume)
+  "Display Helm buffer BUFFER in a separate frame which centered in parent frame.
+
+https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center_of_emacs/"
+  (if (not (display-graphic-p))
+      ;; Fallback to default when frames are not usable.
+      (helm-default-display-buffer buffer)
+    (setq helm--buffer-in-new-frame-p t)
+    (let* ((parent (selected-frame))
+           (frame-pos (frame-position parent))
+           (parent-left (car frame-pos))
+           (parent-top (cdr frame-pos))
+           tab-bar-mode
+           (default-frame-alist
+             (if resume
+                 (buffer-local-value 'helm--last-frame-parameters
+                                     (get-buffer buffer))
+               `((parent . ,parent)
+                 (width . ,helm-display-buffer-width)
+                 (height . ,helm-display-buffer-height)
+                 (undecorated . ,helm-use-undecorated-frame-option)
+                 (left-fringe . 0)
+                 (right-fringe . 0)
+                 (tool-bar-lines . 0)
+                 (tool-bar-lines . 0)
+                 (left . ,(+ parent-left (/ (* (frame-char-width parent) (frame-width parent)) 4)))
+                 (top . ,(+ parent-top (/ (* (frame-char-width parent) (frame-height parent)) 6)))
+                 (title . "Helm")
+                 (vertical-scroll-bars . nil)
+		 (font . ,(assoc-default 'font (frame-parameters)))
+                 (menu-bar-lines . 0)
+                 (fullscreen . nil)
+                 (visible . ,(null helm-display-buffer-reuse-frame))
+		 (minibuffer . t))))
+           display-buffer-alist)
+      (set-face-background 'internal-border (face-foreground 'default))
+      (helm-display-buffer-popup-frame buffer default-frame-alist))
+    (helm-log-run-hook 'helm-window-configuration-hook)))
+
+;; Tabbar UI
+(use-package centaur-tabs
+  :demand
+  :config
+  (centaur-tabs-mode t)
+  (centaur-tabs-change-fonts "Cascadia Code" 130)
+  (centaur-tabs-headline-match)
+  :custom
+  (centaur-tabs-gray-out-icons 'buffer)
+  (centaur-tabs-height 28)
+  (centaur-tabs-set-icons t)
+  (centaur-tabs-set-modified-marker t)
+  (centaur-tabs-modified-marker "●")
+  (centaur-tabs-buffer-groups-function #'centaur-tabs-projectile-buffer-groups)
+  :bind
+  (("s-{" . #'centaur-tabs-backward)
+   ("s-}" . #'centaur-tabs-forward)))
 
 ;; 프로젝트 관리 패키지
 (use-package projectile
@@ -355,9 +420,7 @@
   (setq cider-repl-display-help-banner nil)
   :bind
   ("C-<return>" . cider-eval-last-sexp)
-  ("C-C r" . nrepl-reset)
-  ;; ("C-x M-." . #'cider-find-dwim-other-window)
-  )
+  ("C-C r" . nrepl-reset))
 
 ;; Clojure 리팩토링 지원
 (use-package clj-refactor
@@ -369,8 +432,6 @@
 ;; 등록된 템플릿으로 코드 생성
 (use-package yasnippet
   :hook (clojure-mode . yas-minor-mode))
-
-
 
 ;; repl에 reset 커맨드를 실행 시켜주는 기능
 ;; (defun find-buffer-regex (reg)
@@ -410,10 +471,10 @@
 ;;     (set-variable 'cider-lein-parameters lein-params)
 ;;     (cider-jack-in '())))
 
-;; (defun start-cider-with-local-profile ()
-;;   (interactive)
-;;   (set-variable 'cider-lein-parameters "with-profile +db/local,+env/local repl :headless")
-;;   (cider-jack-in '()))
+(defun start-cider-with-local-profile ()
+  (interactive)
+  (set-variable 'cider-lein-parameters "with-profile +db/local,+env/local repl :headless")
+  (cider-jack-in '()))
 
 ;; (defun reformat-ns ()
 ;;   (save-excursion
@@ -429,7 +490,7 @@
  ;; If there is more than one, they won't work right.
  '(flycheck-popup-tip-error-prefix "* ")
  '(package-selected-packages
-   '(flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
+   '(centaur-tabs helm-ag flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
