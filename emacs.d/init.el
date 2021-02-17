@@ -282,6 +282,14 @@
     (setq helm-display-function 'helm-display-buffer-in-own-frame-center)
     (global-set-key (kbd "M-x") 'helm-M-x)))
 
+;; centaur-tabs과 helm을 함께 쓰는 경우 helm 창이 redraw 안되는 문제가 있어 강제로 redraw-frame 해줌
+;; https://github.com/ema2159/centaur-tabs/issues/110
+(defvar redraw-frame-timer nil)
+(defun redraw-frame-with-timer ()
+  (when (timerp redraw-frame-timer)
+    (cancel-timer redraw-frame-timer))
+  (setq redraw-frame-timer (run-with-idle-timer 0 nil #'redraw-frame)))
+
 ;; helm 버퍼를 화면 가운데 띄우기 위한 함수
 (defun helm-display-buffer-in-own-frame-center (buffer &optional resume)
   "Display Helm buffer BUFFER in a separate frame which centered in parent frame.
@@ -304,9 +312,8 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
                  (width . ,helm-display-buffer-width)
                  (height . ,helm-display-buffer-height)
                  (undecorated . ,helm-use-undecorated-frame-option)
-                 (left-fringe . 0)
+                 (left-fringe . 8)
                  (right-fringe . 0)
-                 (tool-bar-lines . 0)
                  (tool-bar-lines . 0)
                  (left . ,(+ parent-left (/ (* (frame-char-width parent) (frame-width parent)) 4)))
                  (top . ,(+ parent-top (/ (* (frame-char-width parent) (frame-height parent)) 6)))
@@ -320,6 +327,7 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
            display-buffer-alist)
       (set-face-background 'internal-border (face-foreground 'default))
       (helm-display-buffer-popup-frame buffer default-frame-alist))
+    (redraw-frame-with-timer)
     (helm-log-run-hook 'helm-window-configuration-hook)))
 
 ;; Tabbar UI
@@ -490,7 +498,7 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
  ;; If there is more than one, they won't work right.
  '(flycheck-popup-tip-error-prefix "* ")
  '(package-selected-packages
-   '(centaur-tabs helm-ag flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
+   '(awesome-tab centaur-tabs helm-ag flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
