@@ -106,7 +106,8 @@
 
   ;; 맥 키보드 설정
   (setq mac-option-modifier 'meta)
-  (setq mac-command-modifier 'super))
+  (setq mac-command-modifier 'super)
+  (mac-auto-operator-composition-mode))
 
 ;; use-package 설치
 (unless (package-installed-p 'use-package)
@@ -335,7 +336,7 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
   :demand
   :config
   (centaur-tabs-mode t)
-  (centaur-tabs-change-fonts "Cascadia Code" 130)
+  (centaur-tabs-change-fonts "Cascadia Code Light" 130)
   (centaur-tabs-headline-match)
   :custom
   (centaur-tabs-gray-out-icons 'buffer)
@@ -428,7 +429,7 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
   (setq cider-repl-display-help-banner nil)
   :bind
   ("C-<return>" . cider-eval-last-sexp)
-  ("C-C r" . nrepl-reset))
+  ("C-C r" . duct-reset))
 
 ;; Clojure 리팩토링 지원
 (use-package clj-refactor
@@ -442,24 +443,11 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
   :hook (clojure-mode . yas-minor-mode))
 
 ;; repl에 reset 커맨드를 실행 시켜주는 기능
-;; (defun find-buffer-regex (reg)
-;;   (interactive)
-;;   (remove-if-not #'(lambda (x) (string-match reg x))
-;;                  (mapcar #'buffer-name (buffer-list))))
+(defun duct-reset (&optional arg)
+  (interactive)
+  (cider-interactive-eval "(ns dev) (reset)"))
 
-;; (defun cider-execute (command)
-;;   (interactive)
-;;   (set-buffer (car (find-buffer-regex "cider-repl.*")))
-;;   (goto-char (point-max))
-;;   (insert command)
-;;   (cider-repl-return))
-
-;; (defun nr-epl-reset ()
-;;   (interactive)
-;;   (cider-execute "(reset)")
-;;   (message "Reset"))
-
-;; (define-key cider-mode-map (kbd "C-c r") 'nrepl-reset)
+;;(define-key cider-mode-map (kbd "C-c r") 'nrepl-reset)
 ;; (global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
 
 ;; (load-file "~/.emacs.d/cider-show-def/cider-show-def.el")
@@ -479,11 +467,6 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
 ;;     (set-variable 'cider-lein-parameters lein-params)
 ;;     (cider-jack-in '())))
 
-(defun start-cider-with-local-profile ()
-  (interactive)
-  (set-variable 'cider-lein-parameters "with-profile +db/local,+env/local repl :headless")
-  (cider-jack-in '()))
-
 ;; (defun reformat-ns ()
 ;;   (save-excursion
 ;;     (cljr--goto-ns)
@@ -498,7 +481,10 @@ https://www.reddit.com/r/emacs/comments/jj269n/display_helm_frames_in_the_center
  ;; If there is more than one, they won't work right.
  '(flycheck-popup-tip-error-prefix "* ")
  '(package-selected-packages
-   '(awesome-tab centaur-tabs helm-ag flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent)))
+   '(awesome-tab centaur-tabs helm-ag flycheck-inline dimmer counsel-projectile counsel ivy-rich ivy zprint-mode winum which-key use-package treemacs-projectile treemacs-magit transpose-frame symbol-overlay spaceline rainbow-delimiters nord-theme markdown-mode helm-projectile gnu-elpa-keyring-update git-timemachine flycheck-popup-tip flycheck-clj-kondo expand-region exec-path-from-shell edit-indirect company-statistics command-log-mode clj-refactor auto-package-update anzu aggressive-indent))
+ '(safe-local-variable-values
+   '((cider-ns-refresh-after-fn . "integrant.repl/resume")
+     (cider-ns-refresh-before-fn . "integrant.repl/suspend"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
